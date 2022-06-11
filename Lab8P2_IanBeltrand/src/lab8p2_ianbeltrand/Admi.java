@@ -1,5 +1,13 @@
 package lab8p2_ianbeltrand;
 
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class Admi {
@@ -8,6 +16,8 @@ public class Admi {
     ArrayList<Zona> ListaZonas = new ArrayList();
     ArrayList<Mascota> ListaMascotas = new ArrayList();
     ArrayList<Item> ListaItems = new ArrayList();
+    Jugador player = new Jugador();
+    File fileGuardado = new File("./Guardados.JML");
     
     //Constructor y Mutadores
     public Admi(){
@@ -88,5 +98,68 @@ public class Admi {
         }
         
         return null;
+    }
+    
+    public Mascota BuscarMascotaPlayer(String name){
+        for (Mascota pet : player.getListaMascotas()) {
+            if(name.equals(pet.getNombre())){
+                return pet;
+            }
+        }
+        
+        return null;
+    }
+    
+    public void GuardarArchivo(){
+        FileOutputStream fw = null;
+        ObjectOutputStream bw = null;
+        
+        try {
+            fw = new FileOutputStream(fileGuardado);
+            bw = new ObjectOutputStream(fw);
+            
+            bw.writeObject(ListaItems);
+            bw.writeObject(ListaMascotas);
+            bw.writeObject(ListaZonas);
+            bw.writeObject(player);
+            
+            bw.flush();
+        } catch (Exception ex) {
+            
+        } finally {
+            try {
+                bw.close();
+                fw.close();
+            } catch (Exception ex) {
+                
+            }
+        }
+    }
+    
+    public void CargarArchivo() throws FileNotFoundException, IOException, ClassNotFoundException{
+        if(fileGuardado.exists()){
+            FileInputStream entrada = new FileInputStream(fileGuardado);
+            ObjectInputStream objeto = new ObjectInputStream(entrada);
+            
+            try{
+                ArrayList<Item> temp = (ArrayList<Item>)objeto.readObject();
+                ListaItems = temp;
+                
+                ArrayList<Mascota> temp2 = (ArrayList<Mascota>)objeto.readObject();
+                ListaMascotas = temp2;
+                
+                ArrayList<Zona> temp3 = (ArrayList<Zona>)objeto.readObject();
+                ListaZonas = temp3;
+                
+                Jugador temp4 = (Jugador)objeto.readObject();
+                player = temp4;
+
+            } catch (EOFException e) {
+                e.printStackTrace();
+            }
+            objeto.close();
+            entrada.close();
+        }
+        
     }
 }

@@ -10,6 +10,7 @@ public class Mascota {
     int delay = 0;
     int Costo = 0;
     Color color = null;
+    int VidaActual;
 
     public Mascota(String Nombre, int Vida, int delay, int Costo, Color color){
         this.Nombre = Nombre;
@@ -17,6 +18,7 @@ public class Mascota {
         this.delay = delay;
         this.Costo = Costo;
         this.color = color;
+        this.VidaActual = Vida;
     }
 
     public String getNombre() {
@@ -59,6 +61,15 @@ public class Mascota {
         this.color = color;
     }
 
+    public int getVidaActual() {
+        return VidaActual;
+    }
+
+    public void setVidaActual(int VidaActual) {
+        this.VidaActual = VidaActual;
+    }
+
+    
     @Override
     public String toString() {
         return Nombre;

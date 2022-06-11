@@ -6,8 +6,13 @@
 package lab8p2_ianbeltrand;
 
 import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -21,8 +26,13 @@ public class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    public Main() {
+    public Main() throws IOException, FileNotFoundException, ClassNotFoundException {
         initComponents();
+        
+        MascotasTabla tabla = new MascotasTabla(TablaMascotas, admi.player);
+        Thread process = new Thread(tabla);
+        process.start();
+        
     }
 
     /**
@@ -37,9 +47,9 @@ public class Main extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jToolBar1 = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        BarraVidaPet = new javax.swing.JProgressBar();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TablaMascotas = new javax.swing.JTable();
         jToolBar2 = new javax.swing.JToolBar();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -88,7 +98,7 @@ public class Main extends javax.swing.JFrame {
 
         jToolBar1.setRollover(true);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TablaMascotas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -111,13 +121,13 @@ public class Main extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
-            jTable1.getColumnModel().getColumn(1).setResizable(false);
-            jTable1.getColumnModel().getColumn(2).setResizable(false);
-            jTable1.getColumnModel().getColumn(3).setResizable(false);
-            jTable1.getColumnModel().getColumn(4).setResizable(false);
+        jScrollPane1.setViewportView(TablaMascotas);
+        if (TablaMascotas.getColumnModel().getColumnCount() > 0) {
+            TablaMascotas.getColumnModel().getColumn(0).setResizable(false);
+            TablaMascotas.getColumnModel().getColumn(1).setResizable(false);
+            TablaMascotas.getColumnModel().getColumn(2).setResizable(false);
+            TablaMascotas.getColumnModel().getColumn(3).setResizable(false);
+            TablaMascotas.getColumnModel().getColumn(4).setResizable(false);
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -127,7 +137,7 @@ public class Main extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(BarraVidaPet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 930, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -135,7 +145,7 @@ public class Main extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(BarraVidaPet, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(49, Short.MAX_VALUE))
@@ -432,6 +442,7 @@ public class Main extends javax.swing.JFrame {
             }
         }
 
+        admi.GuardarArchivo();
     }//GEN-LAST:event_CrearPetButtonMouseClicked
 
     private void ColorPetCrearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ColorPetCrearMouseClicked
@@ -454,6 +465,8 @@ public class Main extends javax.swing.JFrame {
             ActualizarListaItems();
             JOptionPane.showMessageDialog(this, "Item Creado Exitosamente");
         }
+        
+        admi.GuardarArchivo();
     }//GEN-LAST:event_CrearItemButtonMouseClicked
 
     public void ActualizarListaItems(){
@@ -465,6 +478,8 @@ public class Main extends javax.swing.JFrame {
         }
         
         ListaItemsA.setModel(model);
+        
+        admi.GuardarArchivo();
     }
     
     private void CrearZonaButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CrearZonaButtonMouseClicked
@@ -479,12 +494,16 @@ public class Main extends javax.swing.JFrame {
             if(probaAtaque > 100 || probaAtaque < 0){
                 JOptionPane.showMessageDialog(this, "Esta probabilidad de ataque no es validad, intente de nuevo");
             }else{
-                Zona zona = new Zona(admi.GenerarIdZona(), name, ListaItemsP, probaDerrumbe, probaAtaque);
+                ArrayList<Item> listaItemsF = ListaItemsP;
+                
+                Zona zona = new Zona(admi.GenerarIdZona(), name, listaItemsF, probaDerrumbe, probaAtaque);
                 admi.getListaZonas().add(zona);
                 JOptionPane.showMessageDialog(this, "Zona Creada Exitosamente");
                 ListaItemsP.clear();
             }
         }
+        
+        admi.GuardarArchivo();
     }//GEN-LAST:event_CrearZonaButtonMouseClicked
 
     public void ActualizarItemsSeleccionados(){
@@ -496,6 +515,8 @@ public class Main extends javax.swing.JFrame {
         }
         
         ListaItemsZ.setModel(model);
+        
+        admi.GuardarArchivo();
     }
     
     private void AddItemButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddItemButtonMouseClicked
@@ -506,8 +527,19 @@ public class Main extends javax.swing.JFrame {
         
         ListaItemsP.add(item);
         ActualizarItemsSeleccionados();
+        
+        admi.GuardarArchivo();
     }//GEN-LAST:event_AddItemButtonMouseClicked
 
+    public Item GenerarItem(Zona zone){
+        Random random = new Random();
+        int Up = zone.getItemsDisponibles().size();
+        System.out.println(Up);
+        int Nrandom = random.nextInt(Up);
+        
+        return admi.getListaItems().get(Nrandom);
+    }
+    
     private void SubmitButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SubmitButtonMouseClicked
         // TODO add your handling code here:
         String comando = ComandoEntrada.getText();
@@ -523,6 +555,25 @@ public class Main extends javax.swing.JFrame {
                 getComando = scanned.next();
                 switch(getComando){
                     case "active":
+                        String namePet = scanned.next();
+                        
+                        if(admi.BuscarMascotaPlayer(namePet) != null){
+                            HiloBarraVida barraVida = new HiloBarraVida(BarraVidaPet, admi.BuscarMascotaPlayer(namePet));
+                            Thread proceso = new Thread(barraVida);
+                            proceso.start();
+                            
+                            Salida = "\n\n" + Salida + "Has activado a " + namePet;
+                            Text = LogArea.getText();
+                            
+                            LogArea.setText(Text + Salida);
+                            ComandoEntrada.setText("");
+                        }else{
+                            Salida = "\n\n" + Salida + "No tienes una pet que se llame de ese modo";
+                            Text = LogArea.getText();
+                            
+                            LogArea.setText(Text + Salida);
+                            ComandoEntrada.setText("");
+                        }
                         break;
                     case "feed":
                         break;
@@ -535,6 +586,7 @@ public class Main extends javax.swing.JFrame {
                         Text = LogArea.getText();
                         
                         LogArea.setText(Text + Salida);
+                        ComandoEntrada.setText("");
                         break;
                 }
                 break;
@@ -543,8 +595,8 @@ public class Main extends javax.swing.JFrame {
                 
                 if(admi.BuscarMascota(getComando) != null){
                     Mascota pet = admi.BuscarMascota(getComando);
-                    if(player.getDinero() >= pet.getCosto()){
-                        player.getListaMascotas().add(pet);
+                    if(admi.player.getDinero() >= pet.getCosto()){
+                        admi.player.getListaMascotas().add(pet);
                         admi.getListaMascotas().remove(pet);
                         
                         Salida = "\n\n" + pet.getNombre() + " es ahora tu mascota, cuidala bien!";
@@ -552,10 +604,47 @@ public class Main extends javax.swing.JFrame {
                         Text = LogArea.getText();
                         
                         LogArea.setText(Text + Salida);
+                        ComandoEntrada.setText("");
                     }
                 }
                 break;
             case "!mine":
+                getComando = scanned.next();
+                
+                if(admi.BuscarZona(Integer.parseInt(getComando)) != null){
+                    Zona zone = admi.BuscarZona(Integer.parseInt(getComando));
+                    
+                    Random random = new Random();
+                    int Up = 101;
+                    int Nrandom = random.nextInt(Up);
+                    
+                    if(Nrandom <= zone.ProbaDerrumbe){
+                        admi.player.setDinero(admi.player.getDinero() + 300);
+                        Salida = "\n\n" + Salida + "Has ganado $300" + 
+                                "\nItems Ganados: ";
+                        
+                        Item itemganado;
+                        
+                        for (int i = 0; i < 3; i++) {
+                            itemganado = GenerarItem(zone);
+                            admi.player.getListaItems().add(itemganado);
+                            
+                            Salida = Salida + "\n" + itemganado.toString();
+                        }
+                        
+                        Text = LogArea.getText();
+                        
+                        LogArea.setText(Text + Salida);
+                        
+                    }else{
+                        Salida = "\n\n" + Salida + "La mina se ha derrumbado";
+                        admi.player.setDinero(0);
+                        
+                        Text = LogArea.getText();
+                        
+                        LogArea.setText(Text + Salida);
+                    }
+                }
                 break;
             case "!fish":
                 break;
@@ -570,7 +659,7 @@ public class Main extends javax.swing.JFrame {
             case "!bag":
                 Salida = "\n\nBag Items: ";
                 
-                for (Item listaItem : player.getListaItems()){
+                for (Item listaItem : admi.player.getListaItems()){
                     Salida = Salida + "\n" + listaItem.toString();
                 }
                 
@@ -584,8 +673,8 @@ public class Main extends javax.swing.JFrame {
             case "!w":
                 break;
             case "!b":
-                String dinero = "\n\nDinero: " + player.getDinero() +
-                        "\nDinero Banco: " + player.getDineroBanco();
+                String dinero = "\n\nDinero: " + admi.player.getDinero() +
+                        "\nDinero Banco: " + admi.player.getDineroBanco();
                 String LA = LogArea.getText();
                 
                 LogArea.setText(LA+dinero);
@@ -596,6 +685,8 @@ public class Main extends javax.swing.JFrame {
                 ComandoEntrada.setText("");
                 break;
         }
+        
+        admi.GuardarArchivo();
     }//GEN-LAST:event_SubmitButtonMouseClicked
 
     /**
@@ -628,7 +719,13 @@ public class Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
+                try {
+                    new Main().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -636,6 +733,7 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddItemButton;
     private javax.swing.JCheckBox AlimentoCheckBox;
+    private javax.swing.JProgressBar BarraVidaPet;
     private javax.swing.JButton ColorPetCrear;
     private javax.swing.JTextField ComandoEntrada;
     private javax.swing.JTextField CostoPetCrear;
@@ -654,6 +752,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JTextField ProbaDerrumbe;
     private javax.swing.JTextField ProbaObtencion;
     private javax.swing.JButton SubmitButton;
+    private javax.swing.JTable TablaMascotas;
     private javax.swing.JTextField VidaPetCrear;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -673,19 +772,16 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
     // End of variables declaration//GEN-END:variables
     Admi admi = new Admi();
-    Jugador player = new Jugador();
     int NumeroAutoNumerico = 1;
     ArrayList<Item> ListaItemsP  = new ArrayList();
 }

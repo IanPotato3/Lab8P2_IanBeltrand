@@ -13,7 +13,7 @@ public class Zona {
     int ProbaAtaque = 0;
     
     //Constrcutores y Mutadores
-    public Zona(int id, String Nombre, ArrayList Items, int ProbaDerrumbe, int ProbaAtaque){
+    public Zona(int id, String Nombre, ArrayList<Item> Items, int ProbaDerrumbe, int ProbaAtaque){
         this.id = id;
         this.Nombre = Nombre;
         this.ItemsDisponibles = Items;
